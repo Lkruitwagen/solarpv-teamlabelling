@@ -1,13 +1,13 @@
 ###### A script for generating a dictionary of class labels for a directory of pngs
 # INSTRUCTIONS
-# Call the script with an argument to the directory of pngs, e.g.: python hand_labelling.py './path/to/images/'
+# Call the script with an argument to a storage container which can be found in the google sheet:
 # Images are loaded in matplotlib and displayed. Display the figure window and the python shell side-by-side to view the images while entering input into the python shell
 # User input is requested for every image: 'a'-> label '1'; 's'-> label '0'; 'x'-> exit; '['-> return to the last image (i.e. fix an error); ']'-> advance to the next image (i.e. skip)
-# Labels are saved in a json in the image directory: /path/to/images/labels.json
-# The matplotlib figures get full, so it seems to work well if you quit and restart every 150 images of so.
+# Labels are saved in a json in the image directory: /path/to/images/labels.json and are automatically sent to cloud storage unless the user specifies otherwise.
 
-#https://github.com/Azure/azure-storage-python
-#https://github.com/Azure-Samples/storage-blobs-python-quickstart
+# For more help with azure cloud storage:
+# https://github.com/Azure/azure-storage-python
+# https://github.com/Azure-Samples/storage-blobs-python-quickstart
 
 import sys,os, io, time, json, pickle, glob, readchar, argparse
 
