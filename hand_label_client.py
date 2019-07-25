@@ -38,13 +38,15 @@ def parse_arguments():
 
 class Handlabel_Client:
 
-    def __init__(self,dir_name):
+    def __init__(self,dir_name,local_bool):
         self.connection_json = json.load(open('./azure_handlabel.json','r'))
         self.service = BlockBlobService(account_name=self.connection_json['account_name'], account_key=self.connection_json['key'])
         self.dir_name = dir_name # dir_name == remote container_name
         self.cwd = os.getcwd()
-        if not self.service.exists(self.dir_name):
-            raise Exception('Container does not exist')
+        self.local_bool=local_bool
+        if not self.local_bool:
+            if not self.service.exists(self.dir_name):
+                raise Exception('Container does not exist')
 
     def download(self):
         ### download images for a dir_name
@@ -133,12 +135,14 @@ class Handlabel_Client:
                 if save_counter%10==0:
                     print ('writing list...')
                     json.dump(listodicts,open('./'+self.dir_name+'/labels.json','w'))
-                    self.push_label_json()
+                    if not self.local_bool:
+                        self.push_label_json()
                     toc = time.time()-tic
                     print ('time elapsed (s):',toc,'time(s)/ft:',toc/save_counter)
 
         json.dump(listodicts,open('./'+self.dir_name+'/labels.json','w'))
-        self.push_label_json()
+        if not self.local_bool:
+            self.push_label_json()
         toc = time.time()-tic
         #print ('save coun
         print ('time elapsed (s):',toc,'time(s)/ft:',toc/save_counter)
@@ -163,10 +167,10 @@ if __name__ == "__main__":
     args = parse_arguments()
 
     for a in args.__dict__:
-        print(a,str(a) + ": " + str(args.__dict__[a]))
+        print(str(a) + ": " + str(args.__dict__[a]))
 
 
-    client = Handlabel_Client(args.__dict__['dir_name'])
+    client = Handlabel_Client(args.__dict__['dir_name'], args.__dict__['local'])
 
     
     ##### UI logic
